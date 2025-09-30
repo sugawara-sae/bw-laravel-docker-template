@@ -28,6 +28,7 @@
     <main class="py-4">
       <div class="container">
         @yield('content')
+        <!-- index.blade.php と create.blade.php が入る -->
       </div>
     </main>
   </div>

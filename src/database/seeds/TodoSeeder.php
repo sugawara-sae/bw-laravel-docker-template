@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
+// Illuminate\Database\Seeder; = 
+//  アプリケーションの初期セットアップや、テスト時に必要な初期データをデータベースに投入する。
 
 class TodoSeeder extends Seeder
 {
