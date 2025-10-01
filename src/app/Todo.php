@@ -1,4 +1,6 @@
 <?php
+// Section8
+// データベースに登録されているデータを取得する。
 
 namespace App;
 
@@ -9,12 +11,15 @@ use Illuminate\Database\Eloquent\Model;
 // これにより、データベースのテーブルを、PHPのオブジェクトとして扱えるようになる。
 
 class Todo extends Model
-// class Todo　は「モデルクラス」。
+// Section8
+// TodoModelをデータベースのtodosテーブルとマッピングする。
+// Modelを介することでSQL文を組み立てることなくtodosテーブルを操作することができるようになる。
 {
     protected $table = 'todos';
     // テーブル名の指定。
 
     protected $fillable =
+    // Section14
     // $fillableの定義で、代入できる項目に制限をかける。
     [
         'content',

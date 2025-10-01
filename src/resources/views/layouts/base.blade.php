@@ -1,5 +1,8 @@
-
 <!doctype html>
+<!-- Section12
+表示するphpファイルの、共通部分を別Bladeに分割。
+これは親。 -->
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
   <meta charset="utf-8">

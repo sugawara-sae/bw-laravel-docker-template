@@ -1,3 +1,9 @@
+<!-- Section4
+マイグレーションでtodosテーブルの作成
+appコンテナ内で
+php artisan make:migration create_todos_table
+を実行してマイグレーションファイルの作成 -->
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -16,6 +22,8 @@ class CreateTodosTable extends Migration
         Schema::create('todos', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('content');
+            // Section4
+            // マイグレーションファイルに作成したいテーブル情報を追記
             $table->timestamps();
         });
     }
