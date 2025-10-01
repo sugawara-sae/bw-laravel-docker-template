@@ -19,6 +19,7 @@ class TodoController extends Controller
         // $todos = Todo::all();　クラスから直接呼び出し。
         // $todo = new Todo();　$todo->all();　インスタンスを作ってから呼び出し。
         return view('todo.index',['todos' => $todos]);
+        // viewでindex.blade.phpに渡す。
     }
 
     public function create()

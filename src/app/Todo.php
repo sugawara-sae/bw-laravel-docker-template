@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 // これにより、データベースのテーブルを、PHPのオブジェクトとして扱えるようになる。
 
 class Todo extends Model
+// class Todo　は「モデルクラス」。
 {
     protected $table = 'todos';
+    // テーブル名の指定。
 
     protected $fillable =
     // $fillableの定義で、代入できる項目に制限をかける。
