@@ -3,8 +3,8 @@
 
 @extends('layouts.base')
 <!-- Section12
-分割したBladeを継承
-()内に親ファイルの名前を指定 -->
+分割したBladeを継承。
+()内に親ファイルの名前を指定。 -->
 
 @section('content') 
   <div class="row justify-content-center">

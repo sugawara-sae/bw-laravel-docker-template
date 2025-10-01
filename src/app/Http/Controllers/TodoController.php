@@ -79,7 +79,7 @@ class TodoController extends Controller
         // redirect() = ブラウザに「別のURLに移動してね」と指示を出す。
     }
 
-    
+
     public function show($id)
     // Section16
     // 詳細取得のルートに対応するControllerのメソッドの定義。
@@ -87,10 +87,12 @@ class TodoController extends Controller
     // 今回は$idという変数で受け取るようにする。
     {
     $model = new Todo();
+    
     $todo = $model->find($id);
     // Section16
     // find()メソッドで指定のIDのデータを取得。
     // データベースのidカラムが$idの値と一致するレコードを取得。
+
     return view('todo.show', ['todo' => $todo]);
     }
 }
