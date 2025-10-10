@@ -46,3 +46,8 @@ Route::get('/todo/{id}', 'TodoController@show')->name('todo.show');
 // Section16
 // 詳細画面への遷移ボタンをクリックした際にリクエストするルートを定義。
 // /{id} = ルートパラメータ。URLに含める一意の値。
+
+Route::get('/todo/{id}/edit', 'TodoController@edit')->name('todo.edit');
+// Section18
+// 詳細画面から編集画面へのルート定義。
+// 詳細画面と更新画面で画面を分けるため、編集画面のルートの最後には /edit を追加。

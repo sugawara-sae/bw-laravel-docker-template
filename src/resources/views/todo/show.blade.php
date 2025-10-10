@@ -15,9 +15,11 @@
       </div>
       <div class="row">
         <div class="col-auto">
-          <a href="" class="btn btn-info">編集する</a>
+          <a href="{{ route('todo.edit', ['id' => $todo->id]) }}" class="btn btn-info">編集する</a>
+        </div>
       </div>
-      </div>
+      <!-- Section18 -->
+      <!-- 編集ボタンの実装 -->
     </div>
   </div>
 </div>

@@ -115,7 +115,7 @@ class TodoController extends Controller
         return view('todo.show', ['todo' => $todo]);
     }
 
-    
+
         private $todo; 
     // Section17
 
@@ -130,6 +130,20 @@ class TodoController extends Controller
         // $this = TodoControllerのインスタンス。
         // $this->todo = Todoモデルのインスタンス。
         // $todoを、$this->todoにしまう。あとで他のメソッドで使えるようにしておく。
+    }
+
+
+    public function edit($id)
+    // Section18
+    // 編集対象のデータの取得
+    {
+        $todo = $this->todo->find($id);
+        // Section18
+        // 該当するidのデータを取得。
+
+        return view('todo.edit',['todo' => $todo]);
+        // Section18
+        // 編集画面に表示。
     }
 
 }
