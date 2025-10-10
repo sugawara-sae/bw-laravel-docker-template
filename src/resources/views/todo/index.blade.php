@@ -25,6 +25,11 @@
           @foreach ($todos as $todo)
           <!-- Section10
           Collectionインスタンスに格納されているTodoインスタンスを一つずつ$todoとして取り出している。 -->
+          <!-- 
+          この $todos は、TodoController.php の view('todo.index',['todos' => $todos]); から渡された変数名。（'todos'のこと）
+          $todos は Collectionクラス（配列型オブジェクト）。
+          $todo は foreach文のバリュー、つまり Bladeの中でのループの「一時変数」。TodoController.php の $todo とは無関係。
+           -->
             <div class="d-flex align-items-center p-2">
               <span class="col-9">{{ $todo->content }}</span>
               <!-- Section10

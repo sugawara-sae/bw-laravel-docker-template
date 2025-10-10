@@ -12,7 +12,7 @@
       <div class="card">
         <div class="card-header">ToDo作成</div>
         <div class="card-body">
-          <form method="POST" action="{{ route('todo.store') }}">
+          <form method="post" action="{{ route('todo.store') }}">
             @csrf
             <!-- Section13
             Laravelではフォーム内に@csrfを追記するだけでCSRF対策が完了する。

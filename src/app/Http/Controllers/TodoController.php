@@ -1,14 +1,21 @@
 <?php
 // Section7
-// 実行したい処理はここにまとめる。
+// appコンテナ内で
+// php artisan make:controller TodoController
+// を実行。
+// web.phpに記述したルートで、実行したい処理はここにまとめる。
 
 namespace App\Http\Controllers;
 
 use App\Todo;
+// new Todo（ = Todoモデル）を使用するための宣言。
+// 「Todo.php」で作成した　class Todo extends Model　を継承している。
+
 use Illuminate\Http\Request;
-// Illuminate\Http\Request; = 
-// ユーザーがフォームから送信したデータ（入力、バリデーション、ファイルアップロードなど）や
-// クッキー、ヘッダー、URLなどのリクエストに関するあらゆる情報を取得できる。
+// store(Request $request)（ = Request クラス）を使用するための宣言。
+// ここで宣言しておくことで、クラス名のみの記述で作動するようになる。
+// この宣言がない場合は、完全修飾名（フルパス）が必要になる。
+// つまり、 $request = new \Illuminate\Http\Request(); の記述が必要になる。
 
 
 class TodoController extends Controller
@@ -17,15 +24,21 @@ class TodoController extends Controller
     // Section7 ~
     // ToDo一覧表示ページの処理内容。
     {
-        $todo = new Todo();
+        // $todo = new Todo();
         // Section8
         // TodoControllerでTodoModelを使えるようにするために、インスタンス化。
-        $todos = $todo->all();
+
+        // $todos = $todo->all();
         // Section8
         // ここからtodosテーブルのレコードを全件取得するための実装。
         // 実務では $todos = Todo::all(); と書くのが一般的。
         // $todos = Todo::all();　クラスから直接呼び出し。
         // $todo = new Todo();　$todo->all();　インスタンスを作ってから呼び出し。
+
+        $todos = $this->todo->all();
+        // Section17
+        // $this->todo の投入。メソッドの修正。
+
         return view('todo.index',['todos' => $todos]);
         // Section7
         // view関数を用いることで、画面として表示したいHTMLを指定することができる。
@@ -47,36 +60,39 @@ class TodoController extends Controller
     // Section13
     // 新規作成のルートに対応するControllerのメソッドを定義。
     // 引数に Request $request と書くことで、
-    // $requestにRequestクラスのインスタンスを代入している。
+    // $requestにRequestクラスのインスタンスを注入している。
+    // メソッドインジェクション。
     // Laravelでは、メソッドの引数の左側にクラス名を書くことで、インスタンス化が自動で行われる。
+    // $requestのデータ型：オブジェクト（Illuminate\Http\Requestモデルのインスタンス）
     {
         $inputs = $request->all();
         // Section13
         // フォームから送信されたToDoの内容を取得。
         // Section14
-        // ->all()で、フォームから送信された値を一括で取得。
+        // ->all()で、フォームから送信された値を連想配列の形で一括で取得。
 
-        $todo = new Todo(); 
+        // $todo = new Todo(); 
 
-        $todo->user_id = Auth::id();
-        // Section14
-        // user_idをフォームからしか受け取らない。
-        //  = 悪意のあるユーザーが、フォームを改ざんして他人のuser_idを指定しても無視される。
-
-        $todo->fill($inputs);
+        // $todo->fill($inputs);
         // Section14
         // 連想配列で取得した値を、->fill()を使用して、
         // Todoインスタンスの各プロパティに一括で代入する。
 
-        $todo->save();
+        // $todo->save();
         // Section14
         // Todoインスタンスの`->save()`を実行してオブジェクトの状態をDBに保存するINSERT文を実行。
         // 上記の流れをまとめると、 $todo -> fill($request->all()) -> save();
+
+        $this->todo->fill($inputs);
+        $this->todo->save();
+        // Section17
+        // $this->todo の投入。メソッドの修正。
 
         return redirect()->route('todo.index');
         // Section13
         // ToDoが新規作成された後に、一覧画面を表示させるためのリダイレクト定義。
         // redirect() = ブラウザに「別のURLに移動してね」と指示を出す。
+        // これができると、 PHP-LESSON の時のように、「store.php」のファイルを作成する必要がない！
     }
 
 
@@ -86,15 +102,36 @@ class TodoController extends Controller
     // show()メソッドの引数には、ルート定義で指定したルートパラメータを受け取ることができる。
     // 今回は$idという変数で受け取るようにする。
     {
-    $model = new Todo();
-    
-    $todo = $model->find($id);
-    // Section16
-    // find()メソッドで指定のIDのデータを取得。
-    // データベースのidカラムが$idの値と一致するレコードを取得。
+        // $model = new Todo();
+        // $todo = $model->find($id);
+        // Section16
+        // find()メソッドで指定のIDのデータを取得。
+        // データベースのidカラムが$idの値と一致するレコードを取得。
 
-    return view('todo.show', ['todo' => $todo]);
+        $todo = $this->todo->find($id);
+        // Section17
+        // $this->todo の投入。メソッドの修正。
+
+        return view('todo.show', ['todo' => $todo]);
     }
+
+    
+        private $todo; 
+    // Section17
+
+    public function __construct(Todo $todo)
+    // Section17
+    // __construct() = クラスが作られるとき最初に呼ばれる特別な関数。
+    // Todo クラスのインスタンスを自動で作って、$todo に代入。
+    // 毎回 new Todo() する必要がなくなる。
+    {
+        $this->todo = $todo;
+        // Section17
+        // $this = TodoControllerのインスタンス。
+        // $this->todo = Todoモデルのインスタンス。
+        // $todoを、$this->todoにしまう。あとで他のメソッドで使えるようにしておく。
+    }
+
 }
 
 ?>

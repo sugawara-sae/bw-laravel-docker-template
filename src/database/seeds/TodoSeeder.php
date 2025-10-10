@@ -8,7 +8,7 @@
 
 use Illuminate\Database\Seeder;
 // Illuminate\Database\Seeder; = 
-//  アプリケーションの初期セットアップや、テスト時に必要な初期データをデータベースに投入する。
+// アプリケーションの初期セットアップや、テスト時に必要な初期データをデータベースに投入する。
 
 class TodoSeeder extends Seeder
 {
@@ -19,9 +19,9 @@ class TodoSeeder extends Seeder
      */
     public function run()
     // Section5
-    // テストデータの投入。連想配列の形で用意。    
+    // テストデータの投入。連想配列の形で用意。
     {
-        // DB::table('todos')->truncate();
+        DB::table('todos')->truncate();
         // Section5
         // truncate() = 該当のテーブルのレコードをすべて削除するTRUNCATE文を実行。
         // シーダーの実行により、開発者間のテストデータに差異が生じないようにするため、
