@@ -12,6 +12,10 @@ use Illuminate\Database\Eloquent\Model;
 // Laravelでのデータ操作をシンプルにするORM（Object-Relational Mapping）。
 // これにより、データベースのテーブルを、PHPのオブジェクトとして扱えるようになる。
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+// Section22
+// 論理削除の実装。
+
 
 class Todo extends Model
 // Section8
@@ -29,6 +33,10 @@ class Todo extends Model
 // テーブル名を変更したい場合は、Modelクラスメソッドの、$table　を使えばOK！
 
 {
+    use SoftDeletes;
+    // Section22
+    // 論理削除の実装。
+
     protected $table = 'todos';
     // テーブル名の指定。
     // protected = クラスの中、もしくはTodoクラスを継承しているクラスの中でなら、有効となるアクセス修飾子。保守性確保！
@@ -39,6 +47,8 @@ class Todo extends Model
     [
         'content',
     ];
+
+    
 }
 
 ?>
