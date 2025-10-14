@@ -11,7 +11,8 @@ use App\Todo;
 // new Todo（ = Todoモデル）を使用するための宣言。
 // 「Todo.php」で作成した　class Todo extends Model　を継承している。
 
-use Illuminate\Http\Request;
+use App\Http\Requests\TodoRequest;
+// use Illuminate\Http\Request;
 // store(Request $request)（ = Request クラス）を使用するための宣言。
 // ここで宣言しておくことで、クラス名のみの記述で作動するようになる。
 // この宣言がない場合は、完全修飾名（フルパス）が必要になる。
@@ -27,6 +28,7 @@ class TodoController extends Controller
         // $todo = new Todo();
         // Section8
         // TodoControllerでTodoModelを使えるようにするために、インスタンス化。
+        // データ型：オブジェクト（App\Todo）
 
         // $todos = $todo->all();
         // Section8
@@ -34,6 +36,7 @@ class TodoController extends Controller
         // 実務では $todos = Todo::all(); と書くのが一般的。
         // $todos = Todo::all();　クラスから直接呼び出し。
         // $todo = new Todo();　$todo->all();　インスタンスを作ってから呼び出し。
+        // データ型：array
 
         $todos = $this->todo->all();
         // Section17
@@ -56,7 +59,7 @@ class TodoController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(TodoRequest $request)
     // Section13
     // 新規作成のルートに対応するControllerのメソッドを定義。
     // 引数に Request $request と書くことで、
@@ -70,6 +73,7 @@ class TodoController extends Controller
         // フォームから送信されたToDoの内容を取得。
         // Section14
         // ->all()で、フォームから送信された値を連想配列の形で一括で取得。
+        // データ型：array
 
         // $todo = new Todo(); 
 
@@ -146,6 +150,29 @@ class TodoController extends Controller
         // 編集画面に表示。
     }
 
+    public function update(TodoRequest $request, $id)
+    // Section19
+    // 更新リクエストの値を取得。
+    {
+        $inputs = $request->all();
+        // Section19
+        // 更新データの内容を取得。
+        // データ型：array
+
+        $todo = $this->todo->find($id);
+        // Section19
+        // データベースから、該当idの内容を取得。
+        // データ型：オブジェクト（App\Todo）
+
+        $todo->fill($inputs)->save();
+        // Section19
+        // save()メソッドでcontentの上書き。
+
+        return redirect()->route('todo.show', $todo->id);
+        // Section19
+        // 詳細画面へのリダイレクト。
+        // データベースの編集が終わったら、TodoControllerのshowメソッドを呼び出す。
+    }
 }
 
 ?>

@@ -51,3 +51,7 @@ Route::get('/todo/{id}/edit', 'TodoController@edit')->name('todo.edit');
 // Section18
 // 詳細画面から編集画面へのルート定義。
 // 詳細画面と更新画面で画面を分けるため、編集画面のルートの最後には /edit を追加。
+
+Route::put('/todo/{id}', 'TodoController@update')->name('todo.update');
+// Section19
+// 編集画面から更新の操作。

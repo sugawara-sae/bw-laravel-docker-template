@@ -3,6 +3,8 @@
 ## Todo編集機能
 
 ### 1.@method('PUT')を記述した行に何が出力されているか
+<input type="hidden" name="_method" value="PUT">
+
 
 ### 2.findメソッドの引数に指定しているIDは何のIDか
 
