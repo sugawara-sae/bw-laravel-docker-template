@@ -1,5 +1,4 @@
-<!-- Section16 -->
-<!-- ToDo詳細画面の実装 -->
+<!-- Section16 ToDo詳細画面の実装 -->
  
 @extends('layouts.base')
 @section('content')
@@ -17,9 +16,16 @@
         <div class="col-auto">
           <a href="{{ route('todo.edit', ['id' => $todo->id]) }}" class="btn btn-info">編集する</a>
         </div>
+        <!-- Section18 編集ボタンの実装 -->
+        <div class="col-auto">
+          <form method="POST" action="{{ route('todo.delete',['id' => $todo->id]) }}">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">削除する</button>
+          </form>
+        </div>
+        <!-- Section21 削除ボタンの実装 -->
       </div>
-      <!-- Section18 -->
-      <!-- 編集ボタンの実装 -->
     </div>
   </div>
 </div>

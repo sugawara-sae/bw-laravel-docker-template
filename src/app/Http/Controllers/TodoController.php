@@ -150,6 +150,7 @@ class TodoController extends Controller
         // 編集画面に表示。
     }
 
+
     public function update(TodoRequest $request, $id)
     // Section19
     // 更新リクエストの値を取得。
@@ -172,6 +173,22 @@ class TodoController extends Controller
         // Section19
         // 詳細画面へのリダイレクト。
         // データベースの編集が終わったら、TodoControllerのshowメソッドを呼び出す。
+    }
+
+
+    public function delete($id)
+    // Section21
+    // 削除機能の実装。
+    {
+        $todo = $this->todo->find($id);
+        // Section21
+        // 該当idの内容を取得。
+
+        $todo->delete();
+        // Section21
+        // 削除の実行。
+
+        return redirect()->route('todo.index');
     }
 }
 

@@ -2,8 +2,8 @@
 
 // Section6
 // PHP Appレッスンでは、直前のURLごとに実行する処理を変更する関数を定義していた。
-// 一方でLaravelでは、URLとHTTPメソッドの組み合わせで実行する処理を変更することができる。
-// URLとHTTPメソッドの組み合わせで実行する処理を指定することをルート定義と呼ぶ。
+// 一方でLaravelでは、URIとHTTPメソッドの組み合わせで実行する処理を変更することができる。
+// URIとHTTPメソッドの組み合わせで実行する処理を指定することをルート定義と呼ぶ。
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ Route::post('/todo', 'TodoController@store')->name('todo.store');
 Route::get('/todo/{id}', 'TodoController@show')->name('todo.show');
 // Section16
 // 詳細画面への遷移ボタンをクリックした際にリクエストするルートを定義。
-// /{id} = ルートパラメータ。URLに含める一意の値。
+// /{id} = ルートパラメータ。URIに含める一意の値。
 
 Route::get('/todo/{id}/edit', 'TodoController@edit')->name('todo.edit');
 // Section18
@@ -55,3 +55,7 @@ Route::get('/todo/{id}/edit', 'TodoController@edit')->name('todo.edit');
 Route::put('/todo/{id}', 'TodoController@update')->name('todo.update');
 // Section19
 // 編集画面から更新の操作。
+
+Route::delete('/todo/{id}', 'TodoController@delete')->name('todo.delete');
+// Section21
+// 削除機能の実装。
