@@ -11,6 +11,9 @@
         <form method="POST" action="{{ route('todo.update', $todo->id) }}">
           @csrf
           @method('PUT')
+          <!-- Section19
+          HTMLの仕様として、<form method="PUT">のようにPUTメソッドを指定することはできない。
+          そのため、@method('PUT')を使用して、PUTメソッドでリクエストを送信できるようにしている。 -->
           <div class="form-group row">
             <label for="name" class="col-md-4 col-form-label text-md-right">ToDo入力</label>
             <div class="col-md-6">

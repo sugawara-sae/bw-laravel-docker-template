@@ -45,7 +45,8 @@ Route::post('/todo', 'TodoController@store')->name('todo.store');
 Route::get('/todo/{id}', 'TodoController@show')->name('todo.show');
 // Section16
 // 詳細画面への遷移ボタンをクリックした際にリクエストするルートを定義。
-// /{id} = ルートパラメータ。URIに含める一意の値。
+// /{id} = ルートパラメータ。URIに含める一意の値。{}で変数ということを示す。
+// {id} は index.blade.php から受け取って、TodoController.phpのshowメソッドに渡す。
 
 Route::get('/todo/{id}/edit', 'TodoController@edit')->name('todo.edit');
 // Section18

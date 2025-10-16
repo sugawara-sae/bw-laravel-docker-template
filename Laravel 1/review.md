@@ -1,51 +1,209 @@
 # Laravel Lesson レビュー①
+<!--
+Laravelの自動化　とは……
+
+●モデル名 → テーブル名の変換
+    `Todo` → `todos` など、自動でマッチング（命名規則に従う）
+●モデル → データベース操作
+    `Todo::all()` などでSQL不要でデータ操作
+●ルーティング → コントローラー自動呼び出し
+    `Route::resource()` や `web.php` によるURLと処理の紐づけ
+●ビュー（Blade）でのデータ表示
+    PHPを直接書かずに、テンプレートっぽく記述可能
+●バリデーション・CSRF対策など
+    フォーム処理やセキュリティをほぼ自動で対応
+
+-->
+
 
 ## Todo一覧機能
 
 ### 1.Todoモデルのallメソッドで実行しているSQLは何か
 SELECT * FROM todos
+<!--
+all() は、Eloquentモデルが継承している Illuminate\Database\Eloquent\Model クラスで定義されてる。
+
+Illuminate
+└── Database ← データベース関連のいろんな仕組み（SQLに似た構文で書く。返り値は配列や標準オブジェクト。）
+    └── Eloquent ← Todoモデル（PHPのクラス・メソッドで直感的に書ける。返り値はモデルのインスタンス。）
+        ├── Model       ← all()メソッド
+        ├── Builder     ← SQLを自動生成
+        └── Collection  ← 返り値
+
+｟　処理の流れ　｠
+①Todo::all()
+②Eloquentモデル（Todo）の all() を呼び出す
+③内部的に Builder クラスが使われて SELECT * FROM todos を生成
+④SQLが実行されて、その結果が PHPのオブジェクトの集合（コレクション）として返る
+
+$todos = Todo::all(); に関する詳細は問5にメモしている。
+-->
 
 
 ### 2.Todoモデルのallメソッドの返り値は何か
 Illuminate\Database\Eloquent\Collection
+<!--
+Collection　とは……
+PHPの配列をオブジェクト化して、便利なメソッドで扱えるようにしたもの。
+↓これを
+$names = ['Taro', 'Jiro', 'Saburo'];
+↓こうする
+$collection = collect(['Taro', 'Jiro', 'Saburo']);
+
+Eloquent のクエリで複数件のデータを取ってくると、
+Laravelは自動的に Collection にして返してくれる。
+つまり、all()やget()、where()、orderBy()などのメソッドは、
+Illuminate\Database\Eloquent\Collectionインスタンスを返す。
+逆に、find()やfirst()など、1件だけ取得する場合はモデル（オブジェクト）1つを返す。
+all()を呼び出すことで、クエリの最終結果が常にCollectionオブジェクトとして返され、その後の処理に一貫したアプローチを適用できる。 
+
+Collectionクラスを実際に使用した例は問3に！
+-->
 
 
 ### 3.配列の代わりにCollectionクラスを使用するメリットは
 配列操作がより便利に、直感的に行える。
 豊富なメソッドが使えて、複雑な処理もシンプルに書けるため、読みやすいコードになる。
+<!--
+例　｠
+$users = collect
+([
+    ['name' => 'Sae', 'age' => 20],
+    ['name' => 'Taro', 'age' => 30],
+]);
+
+$names = $users->pluck('name');
+
+pluck():　で、「SELECT name FROM users」的なことができる。
+これをPHPの配列だけで行うと、
+・ループを書いたり
+・条件分岐を書いたり……とにかく面倒！
+逆にLaravelであれば、
+・$items->filter()->map()->pluck() のように連続処理ができたり（メソッドチェーンが使える）
+・dd($collection) で中身確認ができるため、デバッグがしやすくなる！
+-->
 
 
 ### 4.view関数の第1・第2引数の指定と何をしているか
 第1引数は'ファイル名'
 第2引数は'['変数名' => '値']'
 view関数は、指定したBladeテンプレートを読み込んで、渡されたデータを埋め込み、HTMLに変換してブラウザに返す処理をしている。
+<!--
+第1引数は、表示したいBladeテンプレートの名前を指定。
+第2引数は、ビューに渡したいデータを配列形式で渡す。キーがビュー内で使う変数名、値が実際のデータになる。
+
+例　｠
+[ Todocontroller.php ]
+return view('index', ['greeting' => 'おはよう']);
+
+[ index.blade.php ]
+{{ $greeting }}
+
+出力結果：おはよう
+
+※Bladeテンプレート　とは……
+.blade.php という拡張子で保存されているファイル。Laravelのテンプレートエンジン。
+純粋なPHPで書くよりもコードがシンプル、且つ読みやすい。
+独自の便利な書き方が使える。（例: @if, @foreach, @extends, @section, {{}} など）
+Bladeファイル → Lavravelがファイルを読み込みPHPコードに変換 → 実行 → HTML生成 → ブラウザへ返す　という流れで処理する。
+-->
 
 
 ### 5.index.blade.phpの$todos・$todoに代入されているものは何か
 $todosは、データベースのtodosテーブルから取得した全レコードの一覧。
 $todoは、その一覧から取り出した1件のTodoモデルのインスタンス。
+<!--
+※ToDoモデルのインスタンス　とは……
+データベースの1レコードの情報を元に作られた、Todoクラスの「中身入りオブジェクト（実体）」のこと。
+
+例　｠
+| id | title             |
+| -- | --------------    |
+| 1  | アクスタを買う       |
+| 2  | ぬいを買う　　       |
+
+このテーブルがある時、 $todos = Todo::all() を使うと、
+$todos[0] → id:1, title:"アクスタを買う" のデータを持った Todoモデルのインスタンス
+$todos[1] → id:2, title:"ぬいを買う" のデータを持った Todoモデルのインスタンス
+を作成する。
+
+全体の処理の流れ。
+[web.php] URLとコントローラーのアクションを結びつける。
+[TodoController] $todos = Todo::all();　でデータを取得。return view()でビューに返す。
+[index.blade.php] $todos を使ってループ処理などをする。（@foreach ($todos as $todo)）
+-->
 
 
 ## Todo作成機能
 
 ### 6.Requestクラスのallメソッドは何をしているか
 HTTPリクエストで送信された全ての入力データを、キーと値のペアを持つ連想配列として取得する。
+<!--
+返り値 = array（配列）
+問5に記載のデータテーブルにallメソッドを実行した場合、下記のような連想配列が取得できる。
+
+| id | title             |
+| -- | --------------    |
+| 1  | アクスタを買う       |
+| 2  | ぬいを買う　　       |
+
+public function store(Request $request)
+{
+    $data = $request->all();
+}
+
+取得できる連想配列 ：
+['id' => 1 , 'title' => 'アクスタを買う']
+['id' => 2 , 'title' => 'ぬいを買う']
+-->
 
 
 ### 7.fillメソッドは何をしているか
 モデルインスタンスの複数の属性に一度に値を設定している。
+<!--
+fill()は、配列で渡したキー・バリューを、モデルのプロパティにまとめて代入するメソッド。
+ただし、$fillable に指定された属性しか代入されないという制限がある。
+
+例　｠
+$user->name    = $request->name;
+$user->email   = $request->email;
+$user->comment = $request->comment;
+$user->save();
+
+↓↓　上記のコードにfill()を代用した場合　↓↓
+
+$user->fill($request->all())->save();
+-->
 
 
 ### 8.fillableは何のために設定しているか
 一括代入できる属性を指定するためのプロパティ。これにより、意図しないデータの代入を防ぐ。
+<!--
+fill() や create() など一括代入をするメソッドで、「どの属性に代入してもいいか」を明示的に指定するためのもの。
+ホワイトリスト。
+-->
 
 
 ### 9.saveメソッドで実行しているSQLは何か
 新規作成時はINSERT文、既存データの更新時はUPDATE文が実行される。
+<!--
+Laravelは、モデルにid（主キー）があるかどうかで新規 or 既存を見分けている。
+-->
 
 
 ### 10.redirect()->route()は何をしているか
 指定された名前付きルートにリダイレクトしている。
+<!--
+redirect() = ブラウザに「別のURLに移動してね」と指示を出す。
+route('ルート名') = 名前付きルートを指定して、そのURLを自動生成する。
+つまり、redirect()->route()で、指定された名前付きルートにリダイレクトする。
+これにより、ルート名を元に正しいURLが生成され、ユーザーをそのページへ移動させることができる。
+
+[web.php] Route::get('/todo', 'TodoController@index')->name('todo.index');
+ルート設定。
+[TodoController.php] public function store(Request $request){return redirect()->route('todo.index');}
+データ保存が終わった後に、/todosページへリダイレクトする。
+-->
 
 
 ## その他
@@ -53,15 +211,28 @@ HTTPリクエストで送信された全ての入力データを、キーと値�
 ### 11.テーブル構成をマイグレーションファイルで管理するメリット
 マイグレーションでテーブル構成を管理することで、データベースの状態をコードとして管理・共有できるようになる。
 これにより、チーム開発での環境差異をなくし、変更履歴の管理やロールバックが可能になり、作業の効率化とミス防止につながる。
+<!--
+php artisan migrate
+で、テーブル構造をLaravelのコードで定義し、データベースに適用できる。
+phpファイルで管理できるため、Gitで管理できたり、コマンド1つで全員同じ状態のDBが作れたりする。
+-->
 
 
 ### 12.マイグレーションファイルのup()、down()は何のコマンドを実行した時に呼び出されるのか
 up() : php artisan migrate
 down() : php artisan migrate:rollback
+<!--
+up()はテーブル作成、カラム追加、インデックス設定などの処理。マイグレーションの実行。
+down()はテーブル削除、変更の取り消しなどの処理。マイグレーションの巻き戻し。
+-->
 
 
 ### 13.Seederクラスの役割は何か
 データベースに初期データ（テストデータやデフォルト値）を投入するためのクラス。
+<!--
+Seederは初期データ投入用として使われることが多いが、実際には何度でも再利用可能な、開発・テストのための便利ツール。
+開発中のテストデータ作成、DBをリセットして再投入、ダミーデータの再生成……など。
+-->
 
 
 ### 14.route関数の引数・返り値・使用するメリット
@@ -69,17 +240,54 @@ down() : php artisan migrate:rollback
 返り値 : URLの文字列
 使用するメリット : URLが変わってもルート名が同じならコードを修正する必要がないため、URLの変更に強い。
                 URLのパスを直接記述するよりも、可読性と保守性が上がる。
+<!--
+route()の役割 = ルート名でURLを自動生成してくれる
+
+第1引数はルートの'名前'を指定。
+この名前は、web.phpなどのルートファイルでname()メソッドを使って定義する必要がある。
+
+第2引数は省略可。ルートにパラメータを渡す時は、配列形式でパラメータを指定。
+｟　第2引数なしの例　｠
+route('todos.index');
+では、/todos のURLが返ってくる。（todos.index が /todos に対応してる場合）
+｟　第2引数ありの例　｠
+route('todos.show', ['id' => 3]);
+では、/todos/3 というURLを生成。
+-->
 
 
 ### 15.@extends・@section・@yieldの関係性とbladeを分割するメリット
 @extends は親テンプレートを指定し、@section は子ビューで挿入したい内容を定義する。
 親テンプレートでは @yield を使って、子ビューからの内容を挿入する場所を指定する。
 これにより、ビューの分割と再利用がしやすくなり、保守性や可読性が向上する。
+<!--
+srcファイル内では以下のように記載して連携している。
+[base.blade.php（親）]
+    @yield('content')
+
+[index.blade.php（子）]
+    @extends('layouts.base')
+    @section('content')
+
+[create.blade.php（子）]
+    @extends('layouts.base')
+    @section('content')
+-->
 
 
 ### 16.@csrfは何のための記述か
 フォームから送信されるリクエストが正規のものであることを確認するために使用する。
+<!--
+Laravelでは、トークンをフォームに埋め込んで、サーバー側でチェック（信頼できるものかどうかを検証）することで、
+外部からの不正なリクエストをブロックする。
+GET メソッドでは不要。
+逆に、POST / PUT / PATCH / DELETE のフォームでは必ず必要！
+-->
 
 
 ### 17.{{ }}とは何の省略系か
 PHPの echo の省略記法。
+<!--
+{{ }} は PHPの echo の省略記法で、Bladeテンプレート内で変数の値などを画面に出力するために使う。
+さらに、Bladeで{{ }}を使用すると、自動で htmlspecialchars() がかかる。（ = XSS対策にもなる！）
+-->

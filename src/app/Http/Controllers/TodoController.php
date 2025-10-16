@@ -63,8 +63,7 @@ class TodoController extends Controller
     // Section13
     // 新規作成のルートに対応するControllerのメソッドを定義。
     // 引数に Request $request と書くことで、
-    // $requestにRequestクラスのインスタンスを注入している。
-    // メソッドインジェクション。
+    // $requestにRequestクラスのインスタンスを注入している。（メソッドインジェクション）
     // Laravelでは、メソッドの引数の左側にクラス名を書くことで、インスタンス化が自動で行われる。
     // $requestのデータ型：オブジェクト（Illuminate\Http\Requestモデルのインスタンス）
     {
@@ -120,20 +119,22 @@ class TodoController extends Controller
     }
 
 
-        private $todo; 
+    private $todo; 
     // Section17
+    // $this->todo を使うための宣言。
+    // TodoControllerクラスのプロパティとして定義。
+
 
     public function __construct(Todo $todo)
     // Section17
     // __construct() = クラスが作られるとき最初に呼ばれる特別な関数。
-    // Todo クラスのインスタンスを自動で作って、$todo に代入。
+    // Todo クラスのインスタンスを自動で作って、$todo に注入。（コンストラクタインジェクション）
     // 毎回 new Todo() する必要がなくなる。
     {
         $this->todo = $todo;
         // Section17
-        // $this = TodoControllerのインスタンス。
-        // $this->todo = Todoモデルのインスタンス。
-        // $todoを、$this->todoにしまう。あとで他のメソッドで使えるようにしておく。
+        // Todo クラスが注入された $todoを、TodoControllerクラスのプロパティに代入。
+        // $this->todo が クラスのプロパティとして定義されているから、あとで他のメソッドでも使える。
     }
 
 
